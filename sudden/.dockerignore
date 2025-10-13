@@ -1,0 +1,15 @@
+target/
+.mvn/
+.idea/
+.settings/
+*.iml
+.classpath
+.project
+.factorypath
+*.log
+*.class
+.DS_Store
+bruno/
+next-steps.md
+CLAUDE.md
+HELP.md

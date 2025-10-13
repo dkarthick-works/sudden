@@ -1,0 +1,9 @@
+.git/
+.claude/
+.DS_Store
+*.md
+.env
+node_modules/
+target/
+.idea/
+.vscode/

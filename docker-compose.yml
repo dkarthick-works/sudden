@@ -46,9 +46,7 @@ services:
 
   # Spring Boot Backend
   backend:
-    build:
-      context: ./sudden
-      dockerfile: Dockerfile
+    image: dkadev/sudden-backend:latest
     container_name: sudden-backend
     restart: unless-stopped
     environment:
@@ -74,9 +72,7 @@ services:
 
   # React Frontend with Nginx
   frontend:
-    build:
-      context: ./sudden-client/trading-journal
-      dockerfile: Dockerfile
+    image: dkadev/sudden-frontend:latest
     container_name: sudden-frontend
     restart: unless-stopped
     ports:

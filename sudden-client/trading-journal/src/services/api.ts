@@ -1,6 +1,6 @@
 import { Trade } from '../types/trade';
 
-const API_BASE_URL = '/api/v1';
+const API_BASE_URL = '/sudden/api/v1';
 
 export class ApiError extends Error {
   constructor(

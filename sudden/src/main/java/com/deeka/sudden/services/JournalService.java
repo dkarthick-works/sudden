@@ -2,11 +2,13 @@ package com.deeka.sudden.services;
 
 import com.deeka.sudden.models.TradeEntry;
 import com.deeka.sudden.repositories.TradeEntryRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@Slf4j
 public class JournalService {
     private final TradeEntryRepository tradeEntryRepository;
 
@@ -16,6 +18,7 @@ public class JournalService {
 
     public TradeEntry saveJournalEntry(TradeEntry tradeEntry) throws Exception {
         validateTradeEntry(tradeEntry);
+        log.info("Saving trade entry {}", tradeEntry);
         return tradeEntryRepository.save(tradeEntry);
     }
 

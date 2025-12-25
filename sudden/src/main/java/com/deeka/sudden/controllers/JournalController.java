@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/journal")
+@RequestMapping("/sudden/api/v1/journal")
 public class JournalController {
 
     private final JournalService journalService;

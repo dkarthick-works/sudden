@@ -100,6 +100,7 @@ const AddTradePage = (): JSX.Element => {
           capital: parseFloat(capital),
           buyPrice: parseFloat(buyPrice),
           sellPrice: sellPrice ? parseFloat(sellPrice) : null,
+          entryDate: new Date().toISOString(),
           buyReasonLogs: createLogEntry(buyReason),
           exitPlanLogs: createLogEntry(exitPlan),
           mistakeLogs: createLogEntry(mistakes),

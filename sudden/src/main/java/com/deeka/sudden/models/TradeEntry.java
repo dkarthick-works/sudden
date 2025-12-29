@@ -6,7 +6,7 @@ import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 @Document(collection = "trade_entries")
@@ -21,8 +21,8 @@ public class TradeEntry {
     private Float buyPrice;
     private Float sellPrice;
 
-    private Instant entryDate;
-    private Instant exitDate;
+    private LocalDate entryDate;
+    private LocalDate exitDate;
 
     private List<BuyReasonLog> buyReasonLogs;
     private List<ExitPlanLog> exitPlanLogs;

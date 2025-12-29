@@ -1,5 +1,6 @@
 import { X } from 'lucide-react';
-import { FormEvent } from 'react';
+import { FormEvent, useState } from 'react';
+import { formatDateForDisplay, isFutureDate, isDateBefore } from '../utils/dateUtils';
 
 interface AddTradeModalProps {
   isOpen: boolean;
@@ -7,10 +8,49 @@ interface AddTradeModalProps {
 }
 
 const AddTradeModal = ({ isOpen, onClose }: AddTradeModalProps) => {
+  const [entryDate, setEntryDate] = useState('');
+  const [exitDate, setExitDate] = useState('');
+  const [sellPrice, setSellPrice] = useState('');
+  const [dateErrors, setDateErrors] = useState<{ entryDate?: string; exitDate?: string }>({});
+
   if (!isOpen) return null;
+
+  const validateDates = (): boolean => {
+    const errors: { entryDate?: string; exitDate?: string } = {};
+
+    // Validate entry date
+    if (!entryDate) {
+      errors.entryDate = 'Buy date is required';
+    } else if (isFutureDate(entryDate)) {
+      errors.entryDate = 'Buy date cannot be in the future';
+    }
+
+    // Validate exit date
+    if (exitDate) {
+      if (isFutureDate(exitDate)) {
+        errors.exitDate = 'Sell date cannot be in the future';
+      } else if (entryDate && isDateBefore(exitDate, entryDate)) {
+        errors.exitDate = 'Sell date cannot be before buy date';
+      }
+    }
+
+    // If sell price is provided, exit date is required
+    if (sellPrice && !exitDate) {
+      errors.exitDate = 'Sell date is required when sell price is provided';
+    }
+
+    setDateErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // Validate dates first
+    if (!validateDates()) {
+      return;
+    }
+
     // Handle form submission logic here
     console.log('Form submitted');
   };
@@ -57,6 +97,45 @@ const AddTradeModal = ({ isOpen, onClose }: AddTradeModalProps) => {
                 </div>
               </div>
 
+              {/* Buy Date and Sell Date Row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Buy Date <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="date"
+                    value={entryDate}
+                    onChange={(e) => {
+                      setEntryDate(e.target.value);
+                      setDateErrors({ ...dateErrors, entryDate: undefined });
+                    }}
+                    className={`w-full px-4 py-3 border ${dateErrors.entryDate ? 'border-red-500' : 'border-gray-200'} rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 ${dateErrors.entryDate ? 'focus:ring-red-500' : 'focus:ring-blue-500'} focus:border-transparent`}
+                    required
+                  />
+                  {dateErrors.entryDate && (
+                    <p className="mt-1 text-sm text-red-500">{dateErrors.entryDate}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Sell Date {sellPrice && <span className="text-red-500">*</span>}
+                  </label>
+                  <input
+                    type="date"
+                    value={exitDate}
+                    onChange={(e) => {
+                      setExitDate(e.target.value);
+                      setDateErrors({ ...dateErrors, exitDate: undefined });
+                    }}
+                    className={`w-full px-4 py-3 border ${dateErrors.exitDate ? 'border-red-500' : 'border-gray-200'} rounded-lg bg-gray-50 text-gray-900 focus:outline-none focus:ring-2 ${dateErrors.exitDate ? 'focus:ring-red-500' : 'focus:ring-blue-500'} focus:border-transparent`}
+                  />
+                  {dateErrors.exitDate && (
+                    <p className="mt-1 text-sm text-red-500">{dateErrors.exitDate}</p>
+                  )}
+                </div>
+              </div>
+
               {/* Buy Price and Sell Price Row */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -78,6 +157,8 @@ const AddTradeModal = ({ isOpen, onClose }: AddTradeModalProps) => {
                   <input
                     type="number"
                     step="0.01"
+                    value={sellPrice}
+                    onChange={(e) => setSellPrice(e.target.value)}
                     placeholder="160.00"
                     className="w-full px-4 py-3 border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />

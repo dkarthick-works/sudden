@@ -38,12 +38,10 @@ const TradeRow = ({ trade, onClick }: TradeRowProps) => {
         </span>
       </td>
 
-      {/* Entry Type */}
+      {/* Days Held */}
       <td className="px-6 py-4">
-        <span className={`text-sm font-medium ${
-          trade.entryType === 'BUY' ? 'text-green-600' : 'text-red-600'
-        }`}>
-          {trade.entryType}
+        <span className="text-sm text-gray-900">
+          {trade.daysHeld}
         </span>
       </td>
 

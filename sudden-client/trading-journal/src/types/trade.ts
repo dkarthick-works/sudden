@@ -12,6 +12,7 @@ export interface Trade {
   sellPrice: number | null;
   entryDate: string;
   exitDate: string | null;
+  daysHeld: number;
   buyReasonLogs: LogEntry[] | null;
   exitPlanLogs: LogEntry[] | null;
   mistakeLogs: LogEntry[] | null;

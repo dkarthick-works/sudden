@@ -1,8 +1,13 @@
 package com.deeka.sudden.controllers;
 
+import com.deeka.sudden.helpers.JournalHelper;
+import com.deeka.sudden.models.DashboardData;
+import com.deeka.sudden.models.DashboardDataRequest;
+import com.deeka.sudden.models.DashboardDataRequestContext;
 import com.deeka.sudden.models.GenericResponse;
 import com.deeka.sudden.models.TradeEntry;
 import com.deeka.sudden.services.JournalService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +18,11 @@ import java.util.List;
 public class JournalController {
 
     private final JournalService journalService;
+    private final JournalHelper journalHelper;
 
-    JournalController (JournalService journalService) {
+    JournalController (JournalService journalService, JournalHelper journalHelper) {
         this.journalService = journalService;
+        this.journalHelper = journalHelper;
     }
 
     @PostMapping
@@ -40,5 +47,12 @@ public class JournalController {
     ResponseEntity<GenericResponse<TradeEntry>> updateTradeById(@PathVariable String id, @RequestBody TradeEntry tradeEntry) throws Exception {
         TradeEntry updatedTrade = journalService.updateTradeEntry(id, tradeEntry);
         return ResponseEntity.ok(new GenericResponse<>(updatedTrade, "Trade updated successfully", null));
+    }
+
+    @GetMapping("/dashboard")
+    ResponseEntity<GenericResponse<DashboardData>> getDashboardData(@Valid @ModelAttribute DashboardDataRequest request) {
+        DashboardDataRequestContext requestContext = journalHelper.getDashboardRequestContext(request.getFromDate(), request.getToDate());
+        DashboardData dashboardData = journalService.getDashboardData(requestContext);
+        return ResponseEntity.ok(new GenericResponse<>(dashboardData, "Dashboard data fetched successfully", null));
     }
 }

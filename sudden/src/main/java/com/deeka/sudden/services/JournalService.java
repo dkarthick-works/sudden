@@ -1,11 +1,16 @@
 package com.deeka.sudden.services;
 
+import com.deeka.sudden.models.DashboardData;
+import com.deeka.sudden.models.DashboardDataRequestContext;
 import com.deeka.sudden.models.TradeEntry;
 import com.deeka.sudden.repositories.TradeEntryRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -48,5 +53,41 @@ public class JournalService {
     public TradeEntry updateTradeEntry(String id, TradeEntry tradeEntry) {
         tradeEntry.setId(id);
         return tradeEntryRepository.save(tradeEntry);
+    }
+
+    public DashboardData getDashboardData(DashboardDataRequestContext requestContext) {
+        LocalDate fromDate = LocalDate.parse(requestContext.getFromDate());
+        LocalDate toDate = LocalDate.parse(requestContext.getToDate());
+
+        List<TradeEntry> closedTrades = tradeEntryRepository
+                .findBySellPriceNotNullAndExitDateBetween(fromDate, toDate);
+
+        int positiveCount = 0;
+        int negativeCount = 0;
+        float netPL = 0f;
+        Set<String> symbols = new HashSet<>();
+
+        for (TradeEntry trade : closedTrades) {
+            float pl = (trade.getSellPrice() - trade.getBuyPrice())
+                    * (trade.getCapital().floatValue() / trade.getBuyPrice());
+            netPL += pl;
+
+            if (pl > 0) {
+                positiveCount++;
+            } else if (pl < 0) {
+                negativeCount++;
+            }
+
+            symbols.add(trade.getSymbol());
+        }
+
+        DashboardData dashboardData = new DashboardData();
+        dashboardData.setTotalTrades(closedTrades.size());
+        dashboardData.setPositiveTradesCount(positiveCount);
+        dashboardData.setNegativeTradesCount(negativeCount);
+        dashboardData.setNetRealisedProfitAndLoss(netPL);
+        dashboardData.setEntitiesTraded(symbols);
+
+        return dashboardData;
     }
 }

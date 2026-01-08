@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Trade } from '../types/trade';
 import { fetchTrades } from '../services/api';
 import TradeRow from '../components/TradeRow';
+import Dashboard from '../components/Dashboard';
 
 function HomePage() {
   const [trades, setTrades] = useState<Trade[]>([]);
@@ -115,6 +116,11 @@ function HomePage() {
             </button>
           </div>
         </div>
+      </div>
+
+      {/* Dashboard Section */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        <Dashboard />
       </div>
 
       {/* Main Content */}

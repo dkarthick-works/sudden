@@ -1,4 +1,4 @@
-import { Trade } from '../types/trade';
+import { Trade, DashboardData } from '../types/trade';
 
 const API_BASE_URL = '/api/v1';
 
@@ -121,6 +121,35 @@ export const updateTrade = async (id: string, trade: Trade): Promise<Trade> => {
     }
 
     const apiResponse: ApiResponse<Trade> = await response.json();
+    return apiResponse.data;
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    throw new Error(`Network error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+};
+
+export const fetchDashboardData = async (fromDate: string, toDate: string): Promise<DashboardData> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/journal/dashboard?fromDate=${fromDate}&toDate=${toDate}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new ApiError(
+        response.status,
+        `Failed to fetch dashboard data: ${response.statusText}`
+      );
+    }
+
+    const apiResponse: ApiResponse<DashboardData> = await response.json();
     return apiResponse.data;
   } catch (error) {
     if (error instanceof ApiError) {

@@ -35,3 +35,20 @@ export const calculateProfitLossPercentage = (trade: Trade): number | null => {
   if (trade.sellPrice === null) return null;
   return ((trade.sellPrice - trade.buyPrice) / trade.buyPrice) * 100;
 };
+
+// Dashboard types
+export interface DashboardData {
+  totalTrades: number;
+  positiveTradesCount: number;
+  negativeTradesCount: number;
+  netRealisedProfitAndLoss: number;
+  entitiesTraded: string[];
+}
+
+export type DateRangePreset = 'this-month' | 'last-30-days' | 'ytd' | 'custom';
+
+export interface DateRange {
+  fromDate: string;
+  toDate: string;
+  preset: DateRangePreset;
+}
